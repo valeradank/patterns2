@@ -8,7 +8,6 @@ import io.restassured.specification.RequestSpecification;
 import lombok.Value;
 
 
-
 import java.util.Locale;
 
 import static io.restassured.RestAssured.given;
@@ -27,24 +26,22 @@ public class DataGenerator {
     }
 
     private static void sendRequest(RegistrationDto user) {
-        // TODO: отправить запрос на указанный в требованиях path, передав в body запроса объект user
-        //  и не забудьте передать подготовленную спецификацию requestSpec.
-        //  Пример реализации метода показан в условии к задаче.
+        given()
+                .spec(requestSpec)
+                .body(user)
+                .when()
+                .post("/api/system/users")
+                .then()
+                .statusCode(200);
 
     }
 
     public static String getRandomLogin() {
-        // TODO: добавить логику для объявления переменной login и задания её значения, для генерации
-        //  случайного логина используйте faker
-        Faker faker = new Faker(new Locale("en"));
         String login = faker.name().username();
         return login;
     }
 
     public static String getRandomPassword() {
-        // TODO: добавить логику для объявления переменной password и задания её значения, для генерации
-        //  случайного пароля используйте faker
-        Faker faker = new Faker(new Locale("en"));
         String password = faker.internet().password();
         return password;
     }
@@ -53,17 +50,14 @@ public class DataGenerator {
         private Registration() {
         }
 
-        public static String getUser(String status) {
-            // TODO: создать пользователя user используя методы getRandomLogin(), getRandomPassword() и параметр status
-
-
-            return getUser(getRandomLogin(),getRandomPassword();
+        public static RegistrationDto getUser(String status) {
+            var user = new RegistrationDto(getRandomLogin(), getRandomPassword(), status);
+            return user;
         }
 
-        public static String getRegisteredUser(String status) {
-            // TODO: объявить переменную registeredUser и присвоить ей значение возвращённое getUser(status).
-            // Послать запрос на регистрацию пользователя с помощью вызова sendRequest(registeredUser)
-
+        public static RegistrationDto getRegisteredUser(String status) {
+            var registeredUser = getUser(status);
+            sendRequest(registeredUser);
             return registeredUser;
         }
     }
